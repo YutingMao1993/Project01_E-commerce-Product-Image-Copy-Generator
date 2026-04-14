@@ -1,0 +1,40 @@
+import type { TemplateRecord } from "../types";
+
+export const mockTemplates: TemplateRecord[] = [
+  {
+    id: "template-1",
+    name: "Men's Bag Hero Layout",
+    type: "full",
+    store: "Northline Bags",
+    category: "Accessories",
+    tags: ["bags", "hero image", "men"],
+    titleTemplate: "Brand + core product + material + target audience",
+    copyTemplate: "Lead with utility, then reinforce material and daily use context.",
+    imageStyleLabel: "Clean white with top-right benefit sticker",
+    lastUsed: "2026-04-10",
+  },
+  {
+    id: "template-2",
+    name: "Promo Headline Structure",
+    type: "title",
+    store: "Spring Deals",
+    category: "Home",
+    tags: ["promo", "headline", "high intent"],
+    titleTemplate: "Benefit-led opener + category keyword + offer cue",
+    copyTemplate: "Short, promotion-aware copy for campaign landing pages.",
+    imageStyleLabel: "Promo style",
+    lastUsed: "2026-04-08",
+  },
+  {
+    id: "template-3",
+    name: "Lifestyle Feature Copy",
+    type: "copy",
+    store: "Daily Motion",
+    category: "Fitness",
+    tags: ["lifestyle", "copy", "fitness"],
+    titleTemplate: "Simple product naming structure",
+    copyTemplate: "Describe the core benefit, then the scenario and target audience in one sentence.",
+    imageStyleLabel: "Lifestyle scene",
+    lastUsed: "2026-04-05",
+  },
+];

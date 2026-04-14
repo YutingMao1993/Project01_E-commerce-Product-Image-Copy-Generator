@@ -1,15 +1,19 @@
 import type { ChangeEvent } from "react";
 import { ResizableTextarea } from "./ResizableTextarea";
-import type { CopyStyle, FormErrors, FormValues, ImageStyle, UploadedImage } from "../types";
+import type { CopyStyle, ImageStyle, ProductFormErrors, ProductInput, UploadedImage } from "../types";
 
 interface FormPanelProps {
-  values: FormValues;
-  errors: FormErrors;
+  productLabel: string;
+  productSourceLabel: string;
+  values: ProductInput;
+  errors: ProductFormErrors;
   uploadedImages: UploadedImage[];
+  saveToAssetLibrary: boolean;
   isLoading: boolean;
-  onFieldChange: <K extends keyof FormValues>(field: K, value: FormValues[K]) => void;
+  onFieldChange: <K extends keyof ProductInput>(field: K, value: ProductInput[K]) => void;
   onImageUpload: (event: ChangeEvent<HTMLInputElement>) => void;
   onRemoveImage: (id: string) => void;
+  onToggleSaveToAssetLibrary: (nextValue: boolean) => void;
   onGenerate: () => void;
   onReset: () => void;
 }
@@ -18,13 +22,17 @@ const copyStyles: CopyStyle[] = ["Simple", "Professional", "Playful", "Promotion
 const imageStyles: ImageStyle[] = ["Clean white", "Promo style", "Lifestyle"];
 
 export function FormPanel({
+  productLabel,
+  productSourceLabel,
   values,
   errors,
   uploadedImages,
+  saveToAssetLibrary,
   isLoading,
   onFieldChange,
   onImageUpload,
   onRemoveImage,
+  onToggleSaveToAssetLibrary,
   onGenerate,
   onReset,
 }: FormPanelProps) {
@@ -33,11 +41,15 @@ export function FormPanel({
       <div className="panel-header">
         <div>
           <p className="eyebrow">Input</p>
-          <h1>E-commerce Product Image & Copy Generator</h1>
+          <h1>{productLabel}</h1>
         </div>
         <p className="panel-intro">
-          Add product context, upload reference images, and generate draft marketing assets for your team to refine.
+          Edit the selected product from your batch, upload product assets, and generate draft marketing outputs for review.
         </p>
+        <div className="inline-meta-row">
+          <span className="tag-pill">{productSourceLabel}</span>
+          <span className="tag-pill">{uploadedImages.length} image{uploadedImages.length === 1 ? "" : "s"}</span>
+        </div>
       </div>
 
       <div className="form-grid">
@@ -64,6 +76,21 @@ export function FormPanel({
         <label className="field">
           <span>Brand</span>
           <input value={values.brand} onChange={(event) => onFieldChange("brand", event.target.value)} placeholder="Northline" />
+        </label>
+
+        <label className="field">
+          <span>Material</span>
+          <input value={values.material ?? ""} onChange={(event) => onFieldChange("material", event.target.value)} placeholder="Water-resistant nylon" />
+        </label>
+
+        <label className="field">
+          <span>Size</span>
+          <input value={values.size ?? ""} onChange={(event) => onFieldChange("size", event.target.value)} placeholder="28cm x 18cm" />
+        </label>
+
+        <label className="field">
+          <span>Color</span>
+          <input value={values.color ?? ""} onChange={(event) => onFieldChange("color", event.target.value)} placeholder="Black" />
         </label>
 
         <label className="field">
@@ -145,6 +172,18 @@ export function FormPanel({
             </div>
           ) : null}
         </div>
+
+        <label className="field field-full checkbox-field">
+          <input
+            type="checkbox"
+            checked={saveToAssetLibrary}
+            onChange={(event) => onToggleSaveToAssetLibrary(event.target.checked)}
+          />
+          <div>
+            <span>Save product assets to library</span>
+            <small>Keep this product’s images and metadata available for future generation batches.</small>
+          </div>
+        </label>
       </div>
 
       <div className="button-row">
@@ -152,7 +191,7 @@ export function FormPanel({
           {isLoading ? "Generating..." : "Generate"}
         </button>
         <button type="button" className="button button-secondary" onClick={onReset}>
-          Reset
+          Reset Product
         </button>
       </div>
     </section>

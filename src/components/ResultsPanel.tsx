@@ -1,26 +1,35 @@
 import { ResizableTextarea } from "./ResizableTextarea";
-import type { GeneratedVariation, GenerationStatus } from "../types";
+import type { DraftVariation, GenerationStatus } from "../types";
 
 interface ResultsPanelProps {
   status: GenerationStatus;
+  productId: string;
   activeVariationId: string | null;
-  variations: GeneratedVariation[];
+  variations: DraftVariation[];
   errorMessage: string;
-  onSelectVariation: (id: string) => void;
-  onEditVariation: (id: string, field: keyof Pick<GeneratedVariation, "title" | "tagline" | "description">, value: string) => void;
-  onCopyText: (variation: GeneratedVariation) => void;
+  onSelectVariation: (productId: string, variationId: string) => void;
+  onEditVariation: (
+    productId: string,
+    variationId: string,
+    field: keyof Pick<DraftVariation, "title" | "tagline" | "description">,
+    value: string,
+  ) => void;
+  onSaveTemplate: (variation: DraftVariation) => void;
+  onCopyText: (variation: DraftVariation) => void;
   onRegenerate: () => void;
-  onDownloadImage: (variation: GeneratedVariation) => void;
+  onDownloadImage: (variation: DraftVariation) => void;
   onRetry: () => void;
 }
 
 export function ResultsPanel({
   status,
+  productId,
   activeVariationId,
   variations,
   errorMessage,
   onSelectVariation,
   onEditVariation,
+  onSaveTemplate,
   onCopyText,
   onRegenerate,
   onDownloadImage,
@@ -77,7 +86,7 @@ export function ResultsPanel({
                   role="tab"
                   aria-selected={isActive}
                   className={`tab-button ${isActive ? "tab-button-active" : ""}`}
-                  onClick={() => onSelectVariation(variation.id)}
+                  onClick={() => onSelectVariation(productId, variation.id)}
                 >
                   Variation {index + 1}
                 </button>
@@ -95,7 +104,7 @@ export function ResultsPanel({
                 <span>Title</span>
                 <input
                   value={activeVariation.title}
-                  onChange={(event) => onEditVariation(activeVariation.id, "title", event.target.value)}
+                  onChange={(event) => onEditVariation(productId, activeVariation.id, "title", event.target.value)}
                 />
               </label>
 
@@ -103,7 +112,7 @@ export function ResultsPanel({
                 <span>Short Marketing Line</span>
                 <input
                   value={activeVariation.tagline}
-                  onChange={(event) => onEditVariation(activeVariation.id, "tagline", event.target.value)}
+                  onChange={(event) => onEditVariation(productId, activeVariation.id, "tagline", event.target.value)}
                 />
               </label>
 
@@ -112,13 +121,16 @@ export function ResultsPanel({
                 <ResizableTextarea
                   rows={6}
                   value={activeVariation.description}
-                  onChange={(event) => onEditVariation(activeVariation.id, "description", event.target.value)}
+                  onChange={(event) => onEditVariation(productId, activeVariation.id, "description", event.target.value)}
                 />
               </label>
 
               <div className="button-row result-actions">
                 <button type="button" className="button button-primary" onClick={() => onCopyText(activeVariation)}>
                   Copy Text
+                </button>
+                <button type="button" className="button button-secondary" onClick={() => onSaveTemplate(activeVariation)}>
+                  Save as Template
                 </button>
                 <button type="button" className="button button-secondary" onClick={onRegenerate}>
                   Regenerate

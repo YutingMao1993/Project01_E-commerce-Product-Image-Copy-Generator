@@ -1,4 +1,4 @@
-import type { FormValues, GeneratedVariation, UploadedImage } from "../types";
+import type { AssetLibraryItem, DraftVariation, ProductInput, TemplateRecord, UploadedImage } from "../types";
 
 const styleOpeners = {
   Simple: ["Easy upgrade for everyday use.", "Clear value, ready to launch.", "Built to sell without the noise."],
@@ -28,9 +28,13 @@ const formatPrice = (price: string) => {
 };
 
 export async function generateMockResults(
-  values: FormValues,
+  values: ProductInput,
   uploadedImages: UploadedImage[],
-): Promise<GeneratedVariation[]> {
+  options?: {
+    template?: TemplateRecord | null;
+    asset?: AssetLibraryItem | null;
+  },
+): Promise<DraftVariation[]> {
   await delay(1400);
 
   if (values.productName.toLowerCase().includes("error")) {
@@ -45,6 +49,8 @@ export async function generateMockResults(
   const categoryLabel = values.category.trim() || "product";
   const openers = styleOpeners[values.copyStyle];
   const closer = styleClosers[values.imageStyle];
+  const templateLead = options?.template ? `${options.template.name}.` : "";
+  const assetReference = options?.asset?.references[0] ? ` Inspired by ${options.asset.references[0]}.` : "";
 
   return uploadedImages.slice(0, 3).map((image, index) => {
     const benefit = sellingPoints[index] || sellingPoints[0] || descriptionBits[index] || "designed for conversion";
@@ -58,8 +64,8 @@ export async function generateMockResults(
       imageUrl: image.previewUrl,
       imageAlt: `${values.productName} variation ${index + 1}`,
       title: `${brandPrefix}${values.productName}`.trim(),
-      tagline: `${openers[index % openers.length]} ${formattedPrice ? `From ${formattedPrice}.` : ""}`.trim(),
-      description: `${benefit}. ${supportingDetail} ${closer}`.replace(/\s+/g, " ").trim(),
+      tagline: `${templateLead} ${openers[index % openers.length]} ${formattedPrice ? `From ${formattedPrice}.` : ""}`.replace(/\s+/g, " ").trim(),
+      description: `${benefit}. ${supportingDetail} ${closer}${assetReference}`.replace(/\s+/g, " ").trim(),
     };
   });
 }

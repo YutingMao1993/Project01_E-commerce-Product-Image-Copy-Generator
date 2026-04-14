@@ -7,36 +7,33 @@ export interface UploadedImage {
   previewUrl: string;
 }
 
-export interface FormValues {
+export interface ProductInput {
   productName: string;
   category: string;
   price: string;
   brand: string;
+  material?: string;
+  size?: string;
+  color?: string;
+  targetAudience: string;
   sellingPoints: string;
   description: string;
-  targetAudience: string;
   copyStyle: CopyStyle;
   imageStyle: ImageStyle;
 }
 
-export interface FormErrors {
+export type ProductSource = "manual" | "excel";
+
+export interface ProductDraftRecord {
+  id: string;
+  values: ProductInput;
+  uploadedImages: UploadedImage[];
+  saveToAssetLibrary: boolean;
+  source: ProductSource;
+}
+
+export interface ProductFormErrors {
   productName?: string;
   content?: string;
   images?: string;
-}
-
-export interface GeneratedVariation {
-  id: string;
-  imageUrl: string;
-  imageAlt: string;
-  title: string;
-  tagline: string;
-  description: string;
-}
-
-export type GenerationStatus = "empty" | "loading" | "success" | "error";
-
-export interface ToastState {
-  id: number;
-  message: string;
 }
