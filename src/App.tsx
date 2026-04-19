@@ -5,9 +5,11 @@ import { mockAssets } from "./data/mockAssets";
 import { generateMockResults } from "./data/mockGenerator";
 import { mockImportedProducts } from "./data/mockImportedProducts";
 import { mockTemplates } from "./data/mockTemplates";
+import { addProductTask, deleteProductTask, readProductTasks } from "./data/productTaskStorage";
 import { AssetsPage } from "./pages/AssetsPage";
 import { GeneratePage } from "./pages/GeneratePage";
 import { ResultsPage } from "./pages/ResultsPage";
+import { TasksPage } from "./pages/TasksPage";
 import { TemplatesPage } from "./pages/TemplatesPage";
 import type {
   AssetLibraryItem,
@@ -18,6 +20,7 @@ import type {
   ProductDraftResult,
   ProductFormErrors,
   ProductInput,
+  ProductTaskRecord,
   TemplateRecord,
   ToastState,
   UploadedImage,
@@ -73,6 +76,7 @@ export default function App() {
   const [selectedResultProductId, setSelectedResultProductId] = useState<string>("");
   const [templates, setTemplates] = useState<TemplateRecord[]>(mockTemplates);
   const [assetLibrary, setAssetLibrary] = useState(mockAssets);
+  const [productTasks, setProductTasks] = useState<ProductTaskRecord[]>(() => readProductTasks());
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState("Something went wrong while generating your results.");
@@ -284,6 +288,11 @@ export default function App() {
     showToast(`Using asset: ${asset.productName}`);
   };
 
+  const handleDeleteTask = (taskId: string) => {
+    setProductTasks(deleteProductTask(taskId));
+    showToast("Task deleted.");
+  };
+
   const runGeneration = async () => {
     if (!selectedProduct) return;
 
@@ -313,6 +322,34 @@ export default function App() {
         updatedAt: new Date().toISOString(),
       };
       setDraftResults((current) => ({ ...current, [selectedProduct.id]: nextResult }));
+
+      const primaryVariation = generatedWithContext[0];
+      if (primaryVariation) {
+        const nextTask: ProductTaskRecord = {
+          id: `task_${crypto.randomUUID()}`,
+          name: selectedValues.productName || "Untitled Product",
+          status: "completed",
+          input: {
+            category: selectedValues.category || "General",
+            features: selectedValues.sellingPoints
+              .split(/\n|,/)
+              .map((item) => item.trim())
+              .filter(Boolean)
+              .slice(0, 3),
+            originalImage:
+              selectedUploadedImages[0]?.previewUrl ||
+              "https://picsum.photos/seed/generated_input/300/400",
+          },
+          output: {
+            generatedTitle: primaryVariation.title,
+            generatedCopy: `${primaryVariation.tagline}\n${primaryVariation.description}`,
+            generatedPosterImage: primaryVariation.imageUrl,
+          },
+          createdAt: new Date().toISOString(),
+        };
+
+        setProductTasks(addProductTask(nextTask));
+      }
 
       if (selectedSaveToAssetLibrary) {
         const fallbackImageUrl =
@@ -531,6 +568,8 @@ export default function App() {
         {currentView === "templates" ? <TemplatesPage templates={templates} onUseTemplate={handleUseTemplate} /> : null}
 
         {currentView === "assets" ? <AssetsPage assets={assetLibrary} onUseAsset={handleUseAsset} /> : null}
+
+        {currentView === "tasks" ? <TasksPage tasks={productTasks} onDeleteTask={handleDeleteTask} /> : null}
       </AppShell>
 
       <Toast toast={toast} />

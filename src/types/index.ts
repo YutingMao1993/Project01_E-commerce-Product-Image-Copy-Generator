@@ -9,5 +9,6 @@ export type {
   ProductSource,
   UploadedImage,
 } from "./product";
+export type { ProductTaskInput, ProductTaskOutput, ProductTaskRecord, ProductTaskStatus } from "./task";
 export type { TemplateRecord, TemplateType } from "./template";
 export type { AppView, ToastState } from "./ui";

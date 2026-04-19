@@ -105,77 +105,72 @@ export function GeneratePage({
         </article>
       </section>
 
-      <FormPanel
-        productLabel={selectedProduct?.values.productName || "Selected Product"}
-        productSourceLabel={selectedProduct?.source === "excel" ? "Imported from Excel" : "Manual entry"}
-        values={values}
-        errors={errors}
-        uploadedImages={selectedProduct?.uploadedImages ?? []}
-        saveToAssetLibrary={saveToAssetLibrary}
-        isLoading={isLoading}
-        onFieldChange={onFieldChange}
-        onImageUpload={onImageUpload}
-        onRemoveImage={onRemoveImage}
-        onToggleSaveToAssetLibrary={onToggleSaveToAssetLibrary}
-        onGenerate={onGenerate}
-        onReset={onReset}
-      />
-
-      <section className="page-side-column">
-        {selectedTemplate ? (
-          <article className="panel info-panel">
-            <p className="eyebrow">Active Template</p>
-            <h3>{selectedTemplate.name}</h3>
-            <p className="library-meta">{selectedTemplate.store} · {selectedTemplate.category}</p>
-            <p>{selectedTemplate.copyTemplate}</p>
-            <div className="button-row">
-              <button type="button" className="button button-secondary" onClick={onClearSelectedTemplate}>
-                Clear Template
-              </button>
+      <section className="page-stack">
+        <article className="panel info-panel workspace-summary-panel">
+          <div className="workspace-summary-head">
+            <div>
+              <p className="eyebrow">Selected Product</p>
+              <h3>{selectedProduct?.values.productName || "Selected Product"}</h3>
             </div>
-          </article>
-        ) : null}
+            <p className="library-meta">
+              {selectedProduct?.source === "excel" ? "Imported from Excel" : "Manual entry"}
+            </p>
+          </div>
 
-        {selectedAsset ? (
-          <article className="panel info-panel">
-            <p className="eyebrow">Active Asset</p>
-            <h3>{selectedAsset.productName}</h3>
-            <p className="library-meta">{selectedAsset.brand} · {selectedAsset.category}</p>
-            <div className="tag-row">
-              {selectedAsset.references.map((reference) => (
-                <span key={reference} className="tag-pill">{reference}</span>
-              ))}
-            </div>
-            <div className="button-row">
-              <button type="button" className="button button-secondary" onClick={onClearSelectedAsset}>
-                Clear Asset
-              </button>
-            </div>
-          </article>
-        ) : null}
+          <div className="workspace-chip-row">
+            {selectedTemplate ? (
+              <div className="workspace-chip-card">
+                <span className="workspace-chip-label">Template</span>
+                <strong>{selectedTemplate.name}</strong>
+                <button type="button" className="text-button" onClick={onClearSelectedTemplate}>
+                  Clear
+                </button>
+              </div>
+            ) : (
+              <div className="workspace-chip-card workspace-chip-card-muted">
+                <span className="workspace-chip-label">Template</span>
+                <strong>Default logic</strong>
+              </div>
+            )}
 
-        <article className="panel info-panel">
-          <p className="eyebrow">MVP Flow</p>
-          <h3>Batch-Oriented Generate Step</h3>
-          <ul className="info-list">
-            <li>Switch between products in the same batch</li>
-            <li>Use mocked Excel import to preload rows</li>
-            <li>Edit one selected product at a time</li>
-            <li>Generate results from the currently selected product</li>
-          </ul>
+            {selectedAsset ? (
+              <div className="workspace-chip-card">
+                <span className="workspace-chip-label">Asset</span>
+                <strong>{selectedAsset.productName}</strong>
+                <button type="button" className="text-button" onClick={onClearSelectedAsset}>
+                  Clear
+                </button>
+              </div>
+            ) : (
+              <div className="workspace-chip-card workspace-chip-card-muted">
+                <span className="workspace-chip-label">Asset</span>
+                <strong>No saved asset attached</strong>
+              </div>
+            )}
+          </div>
+
+          <div className="workspace-summary-stats">
+            <span>{values.category || "No category"}</span>
+            <span>{uploadedImageCount > 0 ? `${uploadedImageCount} uploaded image(s)` : "No uploaded images"}</span>
+            <span>{saveToAssetLibrary ? "Will save to asset library" : "Not saving to asset library"}</span>
+          </div>
         </article>
 
-        <article className="panel info-panel">
-          <p className="eyebrow">Selected Product</p>
-          <h3>Editor Status</h3>
-          <ul className="info-list">
-            <li>{values.productName ? `Name: ${values.productName}` : "No product name yet"}</li>
-            <li>{values.category ? `Category: ${values.category}` : "Category not set"}</li>
-            <li>{uploadedImageCount > 0 ? `${uploadedImageCount} uploaded image(s)` : "No uploaded images yet"}</li>
-            <li>{saveToAssetLibrary ? "Will save to asset library" : "Not saving to asset library"}</li>
-            <li>{selectedTemplate ? `Template applied: ${selectedTemplate.name}` : "Using default generation logic"}</li>
-          </ul>
-        </article>
+        <FormPanel
+          productLabel={selectedProduct?.values.productName || "Selected Product"}
+          productSourceLabel={selectedProduct?.source === "excel" ? "Imported from Excel" : "Manual entry"}
+          values={values}
+          errors={errors}
+          uploadedImages={selectedProduct?.uploadedImages ?? []}
+          saveToAssetLibrary={saveToAssetLibrary}
+          isLoading={isLoading}
+          onFieldChange={onFieldChange}
+          onImageUpload={onImageUpload}
+          onRemoveImage={onRemoveImage}
+          onToggleSaveToAssetLibrary={onToggleSaveToAssetLibrary}
+          onGenerate={onGenerate}
+          onReset={onReset}
+        />
       </section>
     </div>
   );

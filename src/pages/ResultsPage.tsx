@@ -44,7 +44,7 @@ export function ResultsPage({
       <section className="page-side-column">
         <article className="panel info-panel">
           <p className="eyebrow">Review Queue</p>
-          <h3>Generated Products</h3>
+          <h3>Batch Review</h3>
           <div className="batch-list">
             {products.map((product, index) => {
               const result = draftResults[product.id];
@@ -70,11 +70,12 @@ export function ResultsPage({
 
         <article className="panel info-panel">
           <p className="eyebrow">Selected Product</p>
-          <h3>Review Summary</h3>
+          <h3>Decision Summary</h3>
           <ul className="info-list">
             <li>{selectedResult ? `Status: ${selectedResult.status}` : "Status: not generated"}</li>
             <li>{selectedResult ? `${selectedResult.variations.length} variation(s)` : "No variations yet"}</li>
             <li>{selectedResult?.updatedAt ? `Updated: ${selectedResult.updatedAt.slice(0, 10)}` : "No generated output yet"}</li>
+            <li>{selectedResult?.activeVariationId ? "One variation is currently selected" : "Pick a variation to continue editing"}</li>
           </ul>
         </article>
       </section>

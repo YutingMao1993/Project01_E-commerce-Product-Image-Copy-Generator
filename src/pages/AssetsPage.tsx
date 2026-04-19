@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import type { AssetLibraryItem } from "../types";
 
 interface AssetsPageProps {
@@ -6,6 +7,20 @@ interface AssetsPageProps {
 }
 
 export function AssetsPage({ assets, onUseAsset }: AssetsPageProps) {
+  const [selectedAssetId, setSelectedAssetId] = useState<string>(assets[0]?.id ?? "");
+  const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? assets[0] ?? null;
+
+  useEffect(() => {
+    if (!assets.length) {
+      setSelectedAssetId("");
+      return;
+    }
+
+    if (!assets.some((asset) => asset.id === selectedAssetId)) {
+      setSelectedAssetId(assets[0].id);
+    }
+  }, [assets, selectedAssetId]);
+
   return (
     <section className="page-stack">
       <div className="page-intro">
@@ -21,27 +36,58 @@ export function AssetsPage({ assets, onUseAsset }: AssetsPageProps) {
           <p>Enable “Save product assets to library” on a product and generate a result to add it here.</p>
         </article>
       ) : (
-        <div className="card-grid">
-          {assets.map((asset) => (
-            <article key={asset.id} className="panel asset-card">
-              <img src={asset.imageUrl} alt={asset.productName} className="asset-card-image" />
+        <div className="library-layout">
+          <article className="panel library-list-panel">
+            <div className="library-list-header">
+              <div>
+                <p className="eyebrow">Asset Library</p>
+                <h3>{assets.length} saved assets</h3>
+              </div>
+              <p className="library-meta">Select an asset to inspect metadata and reuse it in Generate.</p>
+            </div>
+
+            <div className="library-list">
+              {assets.map((asset) => {
+                const isActive = asset.id === selectedAsset?.id;
+                return (
+                  <button
+                    key={asset.id}
+                    type="button"
+                    className={`library-list-item ${isActive ? "library-list-item-active" : ""}`}
+                    onClick={() => setSelectedAssetId(asset.id)}
+                  >
+                    <div className="library-list-item-top">
+                      <strong>{asset.productName}</strong>
+                      <span className="library-meta">{asset.savedAt}</span>
+                    </div>
+                    <small>{asset.brand} · {asset.category}</small>
+                    <span className="library-meta">{asset.store}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </article>
+
+          {selectedAsset ? (
+            <article className="panel asset-detail-panel">
+              <img src={selectedAsset.imageUrl} alt={selectedAsset.productName} className="asset-card-image" />
               <div className="asset-card-body">
-                <h4>{asset.productName}</h4>
-                <p className="library-meta">{asset.brand} · {asset.category}</p>
-                <p className="library-meta">{asset.store} · Saved {asset.savedAt}</p>
+                <h3>{selectedAsset.productName}</h3>
+                <p className="library-meta">{selectedAsset.brand} · {selectedAsset.category}</p>
+                <p className="library-meta">{selectedAsset.store} · Saved {selectedAsset.savedAt}</p>
                 <div className="tag-row">
-                  {asset.references.map((reference) => (
+                  {selectedAsset.references.map((reference) => (
                     <span key={reference} className="tag-pill">{reference}</span>
                   ))}
                 </div>
                 <div className="button-row">
-                  <button type="button" className="button button-secondary" onClick={() => onUseAsset(asset)}>
+                  <button type="button" className="button button-primary" onClick={() => onUseAsset(selectedAsset)}>
                     Use Asset
                   </button>
                 </div>
               </div>
             </article>
-          ))}
+          ) : null}
         </div>
       )}
     </section>

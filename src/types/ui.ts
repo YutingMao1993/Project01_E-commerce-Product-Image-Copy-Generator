@@ -3,4 +3,4 @@ export interface ToastState {
   message: string;
 }
 
-export type AppView = "generate" | "results" | "templates" | "assets";
+export type AppView = "generate" | "results" | "templates" | "assets" | "tasks";

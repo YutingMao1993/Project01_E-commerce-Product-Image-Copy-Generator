@@ -41,10 +41,10 @@ export function ResultsPanel({
     <section className="panel panel-results">
       <div className="panel-header panel-header-results">
         <div>
-          <p className="eyebrow">Output</p>
-          <h2>Generated Variations</h2>
+          <p className="eyebrow">Review</p>
+          <h2>Draft Workspace</h2>
         </div>
-        <p className="panel-intro">Review draft combinations, switch between variations, and refine the copy directly in place.</p>
+        <p className="panel-intro">Move through the batch, compare variations, and keep editing inside the same workspace.</p>
       </div>
 
       {status === "empty" ? (
@@ -100,6 +100,18 @@ export function ResultsPanel({
             </div>
 
             <div className="result-content">
+              <div className="result-toolbar">
+                <span className="result-status-badge result-status-success">Ready for review</span>
+                <div className="button-row button-row-compact">
+                  <button type="button" className="button button-secondary" onClick={onRegenerate}>
+                    Regenerate
+                  </button>
+                  <button type="button" className="button button-secondary" onClick={() => onSaveTemplate(activeVariation)}>
+                    Save as Template
+                  </button>
+                </div>
+              </div>
+
               <label className="field">
                 <span>Title</span>
                 <input
@@ -128,12 +140,6 @@ export function ResultsPanel({
               <div className="button-row result-actions">
                 <button type="button" className="button button-primary" onClick={() => onCopyText(activeVariation)}>
                   Copy Text
-                </button>
-                <button type="button" className="button button-secondary" onClick={() => onSaveTemplate(activeVariation)}>
-                  Save as Template
-                </button>
-                <button type="button" className="button button-secondary" onClick={onRegenerate}>
-                  Regenerate
                 </button>
                 <button type="button" className="button button-secondary" onClick={() => onDownloadImage(activeVariation)}>
                   Download Image
